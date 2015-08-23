@@ -59,60 +59,6 @@ public class YouTubeURLExtractor {
             e.printStackTrace();
             return null;
         }
-
-        /*
-        TODO: Remove these scraps once they exist in version control
-        Pattern playerURLPattern = Pattern.compile("swfConfig.*?\"(https?:\\\\/\\\\/.*?watch.*?-.*?\\.swf)\"");
-        try {
-            scanner = this.createScannerForURL(urlString);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        String playerUrl = "";
-        if(scanner.findWithinHorizon(playerURLPattern, 0) != null) {
-            MatchResult match = scanner.match();
-            playerUrl = match.group(1).replaceAll("\\\\(.)", "$1");
-        }
-        */
-
-        /*
-        String encodedURLs = new StringBuilder()
-                .append(args.get("url_encoded_fmt_stream_map"))
-                .append(',')
-                .append(args.get("adaptive_fmts"))
-                .toString();
-
-        Map<Integer, String> urlsByFormat = new HashMap<Integer, String>();
-        for(String urlDataString : encodedURLs.split(",")) {
-            List<NameValuePair> urlData = URLEncodedUtils.parse(urlDataString, Charset.forName("UTF-8"));
-            Integer format = 0;
-            String url = "";
-            for(NameValuePair pair : urlData) {
-                if(pair.getName().equalsIgnoreCase("itag")) {
-                    format = Integer.parseInt(pair.getValue());
-                } else if(pair.getName().equalsIgnoreCase("url")) {
-                    try {
-                        url = URLDecoder.decode(pair.getValue(), "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
-                        //TODO:
-                        e.printStackTrace();
-                        continue;
-                    }
-                }
-                //System.out.println(pair.getName() + ":" + pair.getValue());
-            }
-            //System.out.println();
-            urlsByFormat.put(format, url);
-        }
-        */
-
-        /*
-        for(Integer key : urlsByFormat.keySet()) {
-            System.out.println(key + ":" + urlsByFormat.get(key));
-        }
-        */
     }
 
     private Map<Integer, String> parseDASHManifest(String manifestURL) {
