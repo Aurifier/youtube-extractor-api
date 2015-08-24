@@ -48,7 +48,7 @@ public class YoutubeURLExtractorTest {
 
     @Test
     public void testGetDashManifestURL() {
-        String expectedURLParts = "https://manifest.googlevideo.com/api/manifest/dash/upn/nh/IgpwcjAxLmlhZDI2KgkxMjcuMC4wLjE/hfr/1/pl/19/fexp/key/yt5/sparams/as%2Chfr%2Cid%2Cip%2Cipbits%2Citag%2Cmm%2Cmn%2Cms%2Cmv%2Cnh%2Cpl%2Cplayback_host%2Crequiressl%2Csource%2Cexpire/source/youtube/requiressl/yes/ipbits/0/itag/0/mm/31/signature/mn/sn-p5qlsns6/sver/3/ms/au/mt/mv/m/ip/playback_host/r2---sn-p5qlsns6.googlevideo.com/id/expire/as/fmp4_audio_clear%2Cwebm_audio_clear%2Cfmp4_sd_hd_clear%2Cwebm_sd_hd_clear%2Cwebm2_sd_hd_clear";
+        String expectedURLParts = "https://manifest.googlevideo.com/api/manifest/dash/upn/nh/hfr/1/pl/fexp/key/yt5/sparams/as%2Chfr%2Cid%2Cip%2Cipbits%2Citag%2Cmm%2Cmn%2Cms%2Cmv%2Cnh%2Cpl%2Cplayback_host%2Crequiressl%2Csource%2Cexpire/source/youtube/requiressl/yes/ipbits/0/itag/0/mm/31/signature/mn/sver/3/ms/au/mt/mv/m/ip/playback_host/id/expire/as/fmp4_audio_clear%2Cwebm_audio_clear%2Cfmp4_sd_hd_clear%2Cwebm_sd_hd_clear%2Cwebm2_sd_hd_clear";
 
         YouTubeURLExtractor extractor = new YouTubeURLExtractor();
         URL url = extractor.getDASHManifestURL("waIr3WuHA8s");
