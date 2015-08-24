@@ -26,6 +26,17 @@ import java.util.regex.Pattern;
 
 public class YouTubeURLExtractor {
     public URI getDASHAudioURI(String videoId) {
+        URL manifestURL = this.getDASHManifestURL(videoId);
+        Map<Integer, String> urlsByFormat = parseDASHManifest(manifestURL);
+        try {
+            return new URI(urlsByFormat.get(141));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public URL getDASHManifestURL(String videoId) {
         String urlString = "https://www.youtube.com/watch?v=" + videoId + "&gl=US&hl=en&has_verified=1&bpctr=9999999999";
         Scanner scanner;
         try {
@@ -52,20 +63,19 @@ public class YouTubeURLExtractor {
 
         Map<String, String> args = (Map<String, String>) ytplayerConfig.get("args");
 
-        Map<Integer, String> urlsByFormat = parseDASHManifest(args.get("dashmpd"));
         try {
-            return new URI(urlsByFormat.get(141));
-        } catch (URISyntaxException e) {
+            return new URL(args.get("dashmpd"));
+        } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    private Map<Integer, String> parseDASHManifest(String manifestURL) {
+    private Map<Integer, String> parseDASHManifest(URL manifestURL) {
         NodeList representations;
         try {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document manifest = builder.parse(new URL(manifestURL).openStream());
+            Document manifest = builder.parse(manifestURL.openStream());
             XPath xPath = XPathFactory.newInstance().newXPath();
             String expression = "//Representation";
             representations = (NodeList) xPath.compile(expression).evaluate(manifest, XPathConstants.NODESET);
