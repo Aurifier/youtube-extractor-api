@@ -1,6 +1,8 @@
 package com.caffeinecraft.ytextractor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -14,11 +16,14 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.MatchResult;
@@ -40,7 +45,7 @@ public class YouTubeURLExtractor {
         String urlString = "https://www.youtube.com/watch?v=" + videoId + "&gl=US&hl=en&has_verified=1&bpctr=9999999999";
         Scanner scanner;
         try {
-            scanner = this.createScannerForURL(urlString);
+            scanner = createScannerForURL(urlString);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -62,13 +67,40 @@ public class YouTubeURLExtractor {
         }
 
         Map<String, String> args = (Map<String, String>) ytplayerConfig.get("args");
+        String dashUrl = args.get("dashmpd");
+        if(dashUrl == null) {
+            dashUrl = getDashManifestURLFromVideoInfo(videoId);
+        }
 
         try {
-            return new URL(args.get("dashmpd"));
+            return new URL(dashUrl);
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private String getDashManifestURLFromVideoInfo(String videoId) {
+        String urlString = "https://www.youtube.com/get_video_info?&video_id=" + videoId + "&el=info&ps=default&eurl=&gl=US&hl=en";
+        InputStream info;
+        try {
+            info = new URL(urlString).openStream();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        List<NameValuePair> videoInfoList = URLEncodedUtils.parse(readEntireInputStream(info), Charset.forName("UTF-8"));
+        Map<String, String> videoInfo = new HashMap<String, String>();
+        for(NameValuePair item : videoInfoList) {
+            videoInfo.put(item.getName(), item.getValue());
+        }
+
+        return videoInfo.get("dashmpd");
+    }
+
+    private String readEntireInputStream(InputStream is) {
+        Scanner s = new Scanner(is, "UTF-8").useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 
     private Map<Integer, String> parseDASHManifest(URL manifestURL) {
